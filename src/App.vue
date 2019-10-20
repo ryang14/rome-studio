@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <b-navbar type="dark" variant="primary">
+    <b-navbar type="dark" variant="primary" class="p-0">
       <b-navbar-brand to="/">ROME Studio</b-navbar-brand>
 
       <b-navbar-nav>

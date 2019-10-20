@@ -20,13 +20,21 @@
               >
                 Select
               </button>
-              <button
-                type="button"
-                class="btn btn-danger btn-sm"
-                v-on:click="deleteDriver(driver.url)"
+              <b-button
+                variant="danger"
+                :v-b-modal="'modalDelete'.concat(driver.name)"
               >
                 Delete
-              </button>
+              </b-button>
+              <b-modal
+                :id="'modalDelete'.concat(driver.name)"
+                @ok="
+                  deleteScript(script.url);
+                  return true;
+                "
+              >
+                Are you sure?
+              </b-modal>
             </div>
           </td>
         </tr>
@@ -59,7 +67,10 @@ export default {
   },
   methods: {
     async getDrivers() {
-      const path = "http://localhost:5000/drivers";
+      const path =
+        process.env.NODE_ENV == "development"
+          ? "http://localhost:5000/drivers"
+          : "/api/drivers";
       const res = await fetch(path);
       this.drivers = await res.json();
     },
@@ -67,7 +78,10 @@ export default {
       await fetch(path);
     },
     async addDriver(name) {
-      const path = "http://localhost:5000/drivers";
+      const path =
+        process.env.NODE_ENV == "development"
+          ? "http://localhost:5000/drivers"
+          : "/api/drivers";
       const res = await fetch(path, {
         headers: {
           Accept: "application/json",

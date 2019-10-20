@@ -16,7 +16,10 @@
           <b-button-group size="sm">
             <b-button @click="saveFile(tabIndex)">Save</b-button>
             <b-button @click="closeFile(tabIndex)">close</b-button>
-            <b-button @click="deleteFile(tabIndex)">Delete</b-button>
+            <b-button v-b-modal.modalDelete>Delete</b-button>
+            <b-modal id="modalDelete" @ok="deleteFile(tabIndex)">
+              Are you sure?
+            </b-modal>
           </b-button-group>
 
           <b-input-group size="sm">
@@ -70,11 +73,17 @@ export default {
     };
   },
   methods: {
-    editorInit() {
+    editorInit(editor) {
       require("brace/ext/language_tools"); //language extension prerequsite...
       require("brace/mode/python"); //language
       require("brace/theme/chrome");
       require("brace/snippets/python"); //snippet
+
+      editor.setOptions({
+        enableBasicAutocompletion: true,
+        enableSnippets: true,
+        enableLiveAutocompletion: true
+      });
     },
     closeFile(index) {
       this.files = this.files.filter((val, i) => i != index);
@@ -102,7 +111,10 @@ export default {
       });
     },
     async getScripts() {
-      const path = "http://localhost:5000/scripts";
+      const path =
+        process.env.NODE_ENV == "development"
+          ? "http://localhost:5000/scripts"
+          : "/api/scripts";
       const res = await fetch(path);
       this.scripts = await res.json();
     },

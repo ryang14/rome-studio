@@ -20,13 +20,18 @@
               >
                 Run
               </button>
-              <button
-                type="button"
-                class="btn btn-danger btn-sm"
-                v-on:click="deleteScript(script.url)"
+              <b-button
+                variant="danger"
+                :v-b-modal="'modalDelete'.concat(script.name)"
               >
                 Delete
-              </button>
+              </b-button>
+              <b-modal
+                :id="'modalDelete'.concat(script.name)"
+                @ok="deleteScript(script.url)"
+              >
+                Are you sure?
+              </b-modal>
             </div>
           </td>
         </tr>
@@ -59,7 +64,10 @@ export default {
   },
   methods: {
     async getScripts() {
-      const path = "http://localhost:5000/scripts";
+      const path =
+        process.env.NODE_ENV == "development"
+          ? "http://localhost:5000/scripts"
+          : "/api/scripts";
       const res = await fetch(path);
       this.scripts = await res.json();
     },
@@ -67,7 +75,10 @@ export default {
       await fetch(path);
     },
     async addScript(name) {
-      const path = "http://localhost:5000/scripts";
+      const path =
+        process.env.NODE_ENV == "development"
+          ? "http://localhost:5000/scripts"
+          : "/api/scripts";
       const res = await fetch(path, {
         headers: {
           Accept: "application/json",

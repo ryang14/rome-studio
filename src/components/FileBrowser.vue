@@ -13,8 +13,8 @@
 
 <style scoped>
 .list-group {
+  margin-top: 5%;
   max-height: 450px;
-  margin-bottom: 10px;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
 }
@@ -24,11 +24,12 @@
 import Vue from "vue";
 
 export default {
+  name: "File Browser",
   props: {
     files: Array,
     path: {
       type: String,
-      default: "http://localhost:5000/browser"
+      default: ""
     }
   },
   data() {
@@ -61,7 +62,11 @@ export default {
     }
   },
   created() {
-    this.getFiles("http://localhost:5000/browser");
+    const path =
+      process.env.NODE_ENV == "development"
+        ? "http://localhost:5000/browser"
+        : "/api/browser";
+    this.getFiles(path);
   }
 };
 </script>
