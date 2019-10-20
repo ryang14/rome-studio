@@ -2,14 +2,38 @@
   <b-container fluid>
     <b-row>
       <b-col cols="2">
-        <FileBrowser :files="files" />
+        <FileBrowser
+          :files="files"
+          @pathChange="
+            path => {
+              browserPath = path;
+            }
+          "
+        />
       </b-col>
       <b-col>
         <b-button-toolbar key-nav aria-label="Toolbar with button groups">
           <b-button-group size="sm">
-            <b-button>Save</b-button>
+            <b-button @click="saveFile(tabIndex)">Save</b-button>
             <b-button @click="closeFile(tabIndex)">close</b-button>
+            <b-button @click="deleteFile(tabIndex)">Delete</b-button>
           </b-button-group>
+
+          <b-input-group size="sm">
+            <b-form-input v-model="newFileName"></b-form-input>
+          </b-input-group>
+          <b-button-group size="sm">
+            <b-button @click="newFile(newFileName)">New</b-button>
+          </b-button-group>
+
+          <b-dropdown size="sm" text="Run Script">
+            <b-dropdown-item
+              v-for="(script, index) in scripts"
+              :key="index"
+              @click="runScript(script.run)"
+              >{{ script.name }}</b-dropdown-item
+            >
+          </b-dropdown>
         </b-button-toolbar>
 
         <b-tabs v-model="tabIndex">
@@ -39,7 +63,10 @@ export default {
   data() {
     return {
       tabIndex: 1,
-      files: []
+      files: [],
+      scripts: [],
+      browserPath: "",
+      newFileName: ""
     };
   },
   methods: {
@@ -51,7 +78,40 @@ export default {
     },
     closeFile(index) {
       this.files = this.files.filter((val, i) => i != index);
+    },
+    async saveFile(index) {
+      await fetch(this.files[index].url, {
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json"
+        },
+        method: "PUT",
+        body: JSON.stringify(this.files[index])
+      });
+    },
+    async deleteFile(index) {
+      await fetch(this.files[index].url, {
+        method: "DELETE"
+      });
+      this.closeFile(index);
+    },
+    async newFile(name) {
+      console.log(this.browserPath);
+      await fetch(this.browserPath + "/" + name, {
+        method: "POST"
+      });
+    },
+    async getScripts() {
+      const path = "http://localhost:5000/scripts";
+      const res = await fetch(path);
+      this.scripts = await res.json();
+    },
+    async runScript(path) {
+      await fetch(path);
     }
+  },
+  created() {
+    this.getScripts();
   }
 };
 </script>

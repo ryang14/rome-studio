@@ -25,7 +25,11 @@ import Vue from "vue";
 
 export default {
   props: {
-    files: Array
+    files: Array,
+    path: {
+      type: String,
+      default: "http://localhost:5000/browser"
+    }
   },
   data() {
     return {
@@ -38,15 +42,19 @@ export default {
     async getFiles(path) {
       const res = await fetch(path);
       const jsonRes = await res.json();
+      if (jsonRes["url"]) this.$emit("pathChange", jsonRes["url"]);
       if (jsonRes.type == "folder") {
         this.fileList = jsonRes.contents;
-        this.lastFolder = jsonRes.url
-          .split("/")
-          .slice(0, -1)
-          .join("/");
+        if (jsonRes["url"]) {
+          this.lastFolder = jsonRes.url
+            .split("/")
+            .slice(0, -1)
+            .join("/");
+        }
       } else if (jsonRes.type == "file") {
         Vue.set(this.files, this.files.length, {
           name: path.split("/").slice(-1)[0],
+          url: path,
           contents: jsonRes.contents
         });
       }
