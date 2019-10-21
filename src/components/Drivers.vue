@@ -70,7 +70,7 @@ export default {
       const path =
         process.env.NODE_ENV == "development"
           ? "http://localhost:5000/drivers"
-          : "/api/drivers";
+          : "/drivers";
       const res = await fetch(path);
       this.drivers = await res.json();
     },
@@ -81,7 +81,7 @@ export default {
       const path =
         process.env.NODE_ENV == "development"
           ? "http://localhost:5000/drivers"
-          : "/api/drivers";
+          : "/drivers";
       const res = await fetch(path, {
         headers: {
           Accept: "application/json",

@@ -1,11 +1,14 @@
 <template>
-  <b-list-group>
-    <b-list-group-item v-for="(file, index) in fileList" :key="index"
+  <b-list-group class="m-2">
+    <b-list-group-item
+      v-for="(file, index) in fileList"
+      :key="index"
+      class="p-2"
       ><b-link @click="getFiles(file.url)">{{
         file.name
       }}</b-link></b-list-group-item
     >
-    <b-list-group-item
+    <b-list-group-item v-if="lastFolder != ''"
       ><b-link @click="getFiles(lastFolder)">Back</b-link></b-list-group-item
     >
   </b-list-group>
@@ -13,8 +16,7 @@
 
 <style scoped>
 .list-group {
-  margin-top: 5%;
-  max-height: 450px;
+  max-height: 500px;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
 }
@@ -36,7 +38,7 @@ export default {
     return {
       fileList: [],
       currentFolder: "/",
-      lastFolder: "/"
+      lastFolder: ""
     };
   },
   methods: {
@@ -51,6 +53,8 @@ export default {
             .split("/")
             .slice(0, -1)
             .join("/");
+        } else {
+          this.lastFolder = "";
         }
       } else if (jsonRes.type == "file") {
         Vue.set(this.files, this.files.length, {
@@ -65,7 +69,7 @@ export default {
     const path =
       process.env.NODE_ENV == "development"
         ? "http://localhost:5000/browser"
-        : "/api/browser";
+        : "/browser";
     this.getFiles(path);
   }
 };

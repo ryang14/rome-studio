@@ -11,23 +11,21 @@
           "
         />
       </b-col>
-      <b-col>
-        <b-button-toolbar key-nav aria-label="Toolbar with button groups">
+      <b-col cols="10">
+        <b-button-toolbar key-nav aria-label="Toolbar" class="m-2">
           <b-button-group size="sm">
             <b-button @click="saveFile(tabIndex)">Save</b-button>
-            <b-button @click="closeFile(tabIndex)">close</b-button>
+            <b-button @click="closeFile(tabIndex)">Close</b-button>
             <b-button v-b-modal.modalDelete>Delete</b-button>
             <b-modal id="modalDelete" @ok="deleteFile(tabIndex)">
               Are you sure?
             </b-modal>
+            <b-button @click="newFile(newFileName)">New file:</b-button>
           </b-button-group>
 
           <b-input-group size="sm">
             <b-form-input v-model="newFileName"></b-form-input>
           </b-input-group>
-          <b-button-group size="sm">
-            <b-button @click="newFile(newFileName)">New</b-button>
-          </b-button-group>
 
           <b-dropdown size="sm" text="Run Script">
             <b-dropdown-item
@@ -39,7 +37,7 @@
           </b-dropdown>
         </b-button-toolbar>
 
-        <b-tabs v-model="tabIndex">
+        <b-tabs v-model="tabIndex" class="m-2">
           <b-tab v-for="(file, index) in files" :key="index" :title="file.name">
             <editor
               v-model="file.contents"
@@ -114,7 +112,7 @@ export default {
       const path =
         process.env.NODE_ENV == "development"
           ? "http://localhost:5000/scripts"
-          : "/api/scripts";
+          : "/scripts";
       const res = await fetch(path);
       this.scripts = await res.json();
     },
