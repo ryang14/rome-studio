@@ -16,7 +16,7 @@
 
 <style scoped>
 .list-group {
-  max-height: 500px;
+  max-height: 95vh;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
 }
