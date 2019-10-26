@@ -35,6 +35,15 @@
               >{{ script.name }}</b-dropdown-item
             >
           </b-dropdown>
+
+          <b-dropdown size="sm" text="Select Driver">
+            <b-dropdown-item
+              v-for="(driver, index) in drivers"
+              :key="index"
+              @click="selectDriver(driver.select)"
+              >{{ driver.name }}</b-dropdown-item
+            >
+          </b-dropdown>
         </b-button-toolbar>
 
         <b-tabs v-model="tabIndex" class="m-2">
@@ -118,10 +127,22 @@ export default {
     },
     async runScript(path) {
       await fetch(path);
+    },
+    async getDrivers() {
+      const path =
+        process.env.NODE_ENV == "development"
+          ? "http://localhost:5000/drivers"
+          : "/drivers";
+      const res = await fetch(path);
+      this.drivers = await res.json();
+    },
+    async selectDriver(path) {
+      await fetch(path);
     }
   },
   created() {
     this.getScripts();
+    this.getDrivers();
   }
 };
 </script>
