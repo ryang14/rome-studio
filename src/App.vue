@@ -27,7 +27,7 @@
             <b-form-input v-model="newFileName"></b-form-input>
           </b-input-group>
 
-          <b-dropdown size="sm" text="Run Script">
+          <b-dropdown size="sm" text="Run Script" v-if="status.script==''">
             <b-dropdown-item
               v-for="(script, index) in scripts"
               :key="index"
@@ -35,6 +35,8 @@
               >{{ script.name }}</b-dropdown-item
             >
           </b-dropdown>
+
+          <b-button @click="stopScript()" v-if="status.script!=''">Stop {{status.script}}</b-button>
 
           <b-dropdown size="sm" text="Select Driver">
             <b-dropdown-item
@@ -75,6 +77,8 @@ export default {
       tabIndex: 1,
       files: [],
       scripts: [],
+      drivers: [],
+      status: {},
       browserPath: "",
       newFileName: ""
     };
@@ -128,6 +132,13 @@ export default {
     async runScript(path) {
       await fetch(path);
     },
+    async stopScript() {
+      const path =
+        process.env.NODE_ENV == "development"
+          ? "http://localhost:5000/scripts/stop"
+          : "/scripts/stop";
+      await fetch(path);
+    },
     async getDrivers() {
       const path =
         process.env.NODE_ENV == "development"
@@ -138,11 +149,20 @@ export default {
     },
     async selectDriver(path) {
       await fetch(path);
+    },
+    async getStatus() {
+      const path =
+        process.env.NODE_ENV == "development"
+          ? "http://localhost:5000/status"
+          : "/status";
+      const res = await fetch(path);
+      this.status = await res.json();
     }
   },
   created() {
     this.getScripts();
     this.getDrivers();
+    setInterval(this.getStatus, 100);
   }
 };
 </script>

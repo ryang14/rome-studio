@@ -26,7 +26,7 @@
 import Vue from "vue";
 
 export default {
-  name: "File Browser",
+  name: "FileBrowser",
   props: {
     files: Array,
     path: {
